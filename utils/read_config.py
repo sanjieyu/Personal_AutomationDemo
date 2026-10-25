@@ -1,63 +1,58 @@
 # Author:Yi Sun(Tim) 2022-09-13
 
-'''Read Config function'''
-
+"""Config reader. Env vars override config.ini so secrets never need to be committed."""
 import configparser
 import os
+from collections import namedtuple
+from pathlib import Path
 
-class ReadConfig():
-    def __init__(self):
-        current_path = os.path.abspath("..")   # get the 上一级目录
-        configfile_path = os.path.join(current_path,'Config\\config.ini')  # get the config file
-        self.cf = configparser.ConfigParser()
-        self.cf.read(configfile_path)
+ROOT_DIR = Path(__file__).resolve().parent.parent          # independent of the cwd
+CONFIG_PATH = ROOT_DIR / "Config" / "config.ini"
 
-
-    def get_url(self):
-        url = self.cf.get('config','url')
-        return url
-
-    def admin_username(self):
-        username_admin = self.cf.get('admin','username')
-        # print(username_admin)
-        return username_admin
-
-    def admin_password(self):
-        password_admin = self.cf.get('admin','password')
-        # print(password_admin)
-        return password_admin
-
-    def dealer_username(self):
-        username_dealer = self.cf.get('dealer','username')
-        # print(username_rep)
-        return username_dealer
-
-    def dealer_password(self):
-        password_dealer = self.cf.get('dealer','password')
-        # print(password_rep)
-        return password_dealer
-
-    def supplier_username(self):
-        username_supplier = self.cf.get('supplier','username')
-        # print(username_supplier)
-        return username_supplier
-
-    def supplier_password(self):
-        password_supplier = self.cf.get('supplier','password')
-        # print(password_supplier)
-        return password_supplier
+Credentials = namedtuple("Credentials", "username password")
+MailSettings = namedtuple("MailSettings", "host port user password sender receivers")
 
 
+class ReadConfig:
+    def __init__(self, path: Path = CONFIG_PATH):
+        # interpolation=None: passwords may contain '%'
+        self._cf = configparser.ConfigParser(interpolation=None)
+        self._cf.read(path, encoding="utf-8")
 
-if __name__ == '__main__':
-    config1 = ReadConfig()
-    config1.get_url()
-    config1.admin_username()
-    config1.admin_password()
-    config1.supplier_username()
-    config1.supplier_password()
-    config1.app_username()
-    config1.app_password()
+    def _get(self, section: str, option: str, env_name: str) -> str:
+        value = os.getenv(env_name) or self._cf.get(section, option, fallback="")
+        if not value:
+            raise KeyError(f"Missing [{section}] {option}; set it in config.ini or env var {env_name}")
+        return value
+
+    def get_url(self) -> str:
+        return self._get("config", "url", "EGD_URL")
+
+    def get_credentials(self, role: str) -> Credentials:
+        """role: admin / dealer / sales"""
+        prefix = f"EGD_{role.upper()}"
+        return Credentials(
+            self._get(role, "username", f"{prefix}_USERNAME"),
+            self._get(role, "password", f"{prefix}_PASSWORD"),
+        )
+
+    def get_mail_settings(self) -> MailSettings:
+        """[mail] section of config.ini; env vars SMTP_* / MAIL_* take priority if set."""
+        user = self._get("mail", "smtp_user", "SMTP_USER")
+        password = self._get("mail", "smtp_password", "SMTP_PASSWORD")
+        receivers = [r.strip() for r in self._get("mail", "mail_to", "MAIL_TO").split(",") if r.strip()]
+        host = os.getenv("SMTP_HOST") or self._cf.get("mail", "smtp_host", fallback="smtp.gmail.com")
+        port = int(os.getenv("SMTP_PORT") or self._cf.get("mail", "smtp_port", fallback="587"))
+        sender = os.getenv("MAIL_FROM") or self._cf.get("mail", "mail_from", fallback="") or user
+        return MailSettings(host, port, user, password, sender, receivers)
+
+    # ---- thin wrappers kept for APITest / legacy callers ----
+    def admin_username(self): return self.get_credentials("admin").username
+    def admin_password(self): return self.get_credentials("admin").password
+    def dealer_username(self): return self.get_credentials("dealer").username
+    def dealer_password(self): return self.get_credentials("dealer").password
+    def sales_username(self): return self.get_credentials("sales").username
+    def sales_password(self): return self.get_credentials("sales").password
 
 
 
