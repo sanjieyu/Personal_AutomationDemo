@@ -19,7 +19,7 @@ class AccountCustomerUITest(BaseUITest):
 
     def test_account_customer_ui_001(self):
         '''Verify the url'''
-        self.assertEqual(self.base_url + 'Customer/List', self.account_page.current_url)
+        self.assertEqual(self.base_url + 'Customer/Test', self.account_page.current_url)
 
     def test_account_customer_ui_002(self):
         '''Verify the title'''
@@ -35,12 +35,12 @@ class AccountCustomerUITest(BaseUITest):
 
     def test_account_customer_ui_005(self):
         '''Verify each column on this screen'''
-        self.assertEqual(['ID', 'Account Customer', 'Status', 'City', 'State', 'Terms'],
+        self.assertEqual(['Test Sample 1','Test Sample 2','Test Sample 3'],
                          self.account_page.get_column_headers())
 
     def test_account_customer_ui_006(self):
         '''Verify the Search function (changes the page, so keep it last: tests run in name order)'''
-        self.assertEqual('tim2 with priced items', self.account_page.search_and_get_first_result('tim2'))
+        self.assertEqual('yisun with test items', self.account_page.search_and_get_first_result('yi_sun'))
 
 
 if __name__ == '__main__':

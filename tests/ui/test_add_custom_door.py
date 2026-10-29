@@ -20,15 +20,12 @@ class Add_CustomDoor_Fun_Test(BaseUITest):
     def test_add_customdoor_fun_001(self):
         '''Verify the input validation when add a new door'''
         self.driver.implicitly_wait(2)
-        self.assertIn(('Errors For current Headroom height, pelmet is required Panels Wide should be selected If SR '
-                       '(left) is less than 89mm, LH Jamb should be minimum 90mm. If SR (right) is less than 89mm, '
-                       'RH Jamb should be minimum 90mm. Motors field is required'),
-                         self.add_custom_door_page.validation_input())
+        self.assertIn(('Test Sample 1','Test Sample 2','Test Sample 3'),self.add_custom_door_page.validation_input())
 
     def test_add_customdoor_fun_002(self):
         '''Verify the add door function'''
         self.add_custom_door_page.add_custom_detail()
-        self.assertEqual(('Custom Door, Residential, OilColour (10 x 60)'), self.add_custom_door_page.new_added_custom_door())
+        self.assertEqual(('Test Sample, name, colour (10 x 60)'), self.add_custom_door_page.new_added_custom_door())
     def test_add_customdoor_fun_003(self):
         '''Verify the duplicate button for the new added door'''
         self.driver.implicitly_wait(2)

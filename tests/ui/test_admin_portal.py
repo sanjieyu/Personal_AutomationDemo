@@ -21,7 +21,7 @@ class AdminUITest(BaseUITest):
 
     def test_adminportal_ui_002(self):
         '''Verify the default Sections in Admin login Page'''
-        self.assertEqual(['QUOTES','SERVICES', 'LIST', 'ACCOUNT'], self.admin_page.get_top_menu_texts())
+        self.assertEqual(['Test Sample 1','Test Sample 2','Test Sample 3'], self.admin_page.get_top_menu_texts())
 
     def test_adminportal_ui_003(self):
         '''Verify the Find Quote in Admin Login page'''
@@ -37,26 +37,23 @@ class AdminUITest(BaseUITest):
 
     def test_adminportal_ui_006(self):
         '''Verify the Quotes Menu'''
-        self.assertEqual(['Add New Quote', 'Search'],self.admin_page.get_quotes_menu_items())
+        self.assertEqual(['Test Sample 1','Test Sample 2','Test Sample 3'],self.admin_page.get_quotes_menu_items())
 
     def test_adminportal_ui_007(self):
         '''Verify the Services Menu'''
-        self.assertEqual(['Add New Service','Search','MYOB'],self.admin_page.get_services_menu_items())
+        self.assertEqual(['Test Sample 1','Test Sample 2','Test Sample 3'],self.admin_page.get_services_menu_items())
 
     def test_adminportal_ui_008(self):
         '''Verify the Lists Menu'''
-        self.assertEqual(['MYOB','Job Accepted Doors','On-Hold Doors','New Order','Production – VIC','Production – WA',
-                          'Assembly Interstate','Dispatch','Schedule'], self.admin_page.get_list_menu_items())
+        self.assertEqual(['Test Sample 1','Test Sample 2','Test Sample 3'], self.admin_page.get_list_menu_items())
 
     def test_adminportal_ui_009(self):
         '''Verify the Account Menu'''
-        self.assertEqual(['Change my password', 'Update my profile', 'Update my email settings',
-                          'Users Management', 'Travel Area Management', 'Rolling Cycle Management »',
-                          'SMS Notifications', 'Log off'], self.admin_page.get_account_menu_items())
+        self.assertEqual(['Test Sample 1','Test Sample 2','Test Sample 3'], self.admin_page.get_account_menu_items())
 
     def test_adminportal_ui_010(self):
         '''Verify the Copyright and Terms'''
-        self.assertEqual([f'© {datetime.now().year} - EcoGarageDoors', 'Terms and Policies'],
+        self.assertEqual([f'© {datetime.now().year} - Test Sample', 'Terms and Policies'],
                          self.admin_page.get_footer_texts())
 
 
